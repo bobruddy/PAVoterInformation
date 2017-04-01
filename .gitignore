@@ -1,0 +1,8 @@
+*.pw
+.*swp
+*.bak
+*.csv
+*.out
+*.temp
+*.tmp
+*.txt
