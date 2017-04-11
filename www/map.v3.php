@@ -17,6 +17,7 @@
         padding: 0;
       }
     </style>
+    <script src="//code.angularjs.org/snapshot/angular.min.js"></script>
   </head>
 <?php require("phpsqlajax_dbinfo.pw"); ?>
 
