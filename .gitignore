@@ -6,3 +6,4 @@
 *.temp
 *.tmp
 *.txt
+tmp/
