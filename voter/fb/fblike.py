@@ -7,16 +7,17 @@ import mysql.connector
 
 parser = argparse.ArgumentParser(description = 'Grab options')
 
+parser.add_argument('-s', dest="source", action='store',
+    nargs=1, help="data source", required=True,
+    choices=['agcPrivate', 'agcPublic', 'plePTA']
+    )
+
 parser.add_argument('-i', dest="infile", action='store',
     nargs=1,
     help="input file", default="-")
 
 parser.add_argument('-d', dest='debug', action='store_true',
         help='Turns on debug mode')
-
-parser.add_argument('-g', dest='type', action='store_const',
-        const='agcPrivate', default='agcPublic',
-        help='by default this script will process a page file. This will process a group file')
 
 parser.add_argument('-n', dest="nodb", action='store_true',
     help="Store in the database")
@@ -25,7 +26,7 @@ options = parser.parse_args()
 
 if options.debug == True:
     print "nodb: " , options.nodb
-    print "type: " , options.type
+    print "source: " , options.source
     print "infile: " , options.infile
 
 # connect to my DB
@@ -74,18 +75,25 @@ else:
     infile = open( options.infile[0], "r")
 
 # build my re
+addfriend = re.compile(r'(Add FriendMore Options)')
 name = re.compile(r'^([a-zA-Z]\S+).* (\S+)$')
 since = re.compile(r'^(\d+ \w+ ago|\d\d/\d\d/\d\d)')
 role = re.compile(r'^(\w)')
+madian = re.compile(r' (\S+)$')
 recordstart = re.compile(r'^$')
 newrecord = "yes"
 
 for line in infile:				# loop through the file
-    for pattern in (name, since, role, recordstart):		# loop through the regex
-        match = re.search(pattern, line)
+    # nline = line.replace(madian, '')
+    nline = re.sub( r' \(\S+\)$', "", line )
+    # print nline
+    for pattern in (addfriend, name, recordstart):		# loop through the regex
+        match = re.search(pattern, nline)
         if match:
             if pattern == recordstart:
                 newrecord = "yes"
+            elif ( pattern == addfriend ):
+                break
             elif ( pattern == name and newrecord == "yes" ):
                 newrecord = "no"
                 print "Name: " + match.group(1) + " " + match.group(2)
@@ -93,12 +101,16 @@ for line in infile:				# loop through the file
 			data_user = {
 		  	  'first_name': match.group(1),
 		  	  'last_name': match.group(2),
-		  	  'page': options.type
+		  	  'page': options.source[0]
 			}
 			cur.execute(add_user, data_user)
-            else:
-	   	break
-
+            #else:
+                #print pattern
+                #print " " + ": " + match.group(0)
+	   	#break
+        #else:
+            #if options.debug == True:
+                #print "Not Matched: " + line
 
 
 if infile is not sys.stdin:

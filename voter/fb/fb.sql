@@ -15,11 +15,13 @@ select
 	vl.PhoneNumHome,
 	vl.General_Percent_Attended_Weighted,
 	vl.Primary_Percent_Attended_Weighted,
-	CASE
-		WHEN (pri.page="agcPrivate" AND pub.page="agcPublic") THEN 'both'
-		WHEN pri.page="agcPrivate" THEN 'private only'
-		WHEN pub.page="agcPublic" THEN 'public only'
-	END AS Facebook
+	#concat_ws(',', COALESCE(pri.page, ''), COALESCE(pub.page, ''), COALESCE(ple.page, '')) AS Facebook
+	concat(COALESCE(pri.page, ''), COALESCE(pub.page, ''), COALESCE(ple.page, '')) AS Facebook
+	#CASE
+	#	WHEN (pri.page="agcPrivate" AND pub.page="agcPublic") THEN 'agcBoth'
+	#	WHEN pri.page="agcPrivate" THEN 'agcPrivateOnly'
+	#	WHEN pub.page="agcPublic" THEN 'agcPublicOnly'
+	#END AS Facebook
 	#pri.page As Private,
 	#pub.page As Pub
 from
@@ -27,5 +29,7 @@ from
 		pri.First_Name = vl.First_Name AND pri.Last_Name = vl.Last_Name AND pri.page = "agcPrivate"
 		LEFT OUTER JOIN fb_list as pub ON 
 		pub.First_Name = vl.First_Name AND pub.Last_Name = vl.Last_Name AND pub.page = "agcPublic"
+		LEFT OUTER JOIN fb_list as ple ON 
+		ple.First_Name = vl.First_Name AND ple.Last_Name = vl.Last_Name AND ple.page = "plePTA"
 
 #where vl.last_name like 'ruddy'
