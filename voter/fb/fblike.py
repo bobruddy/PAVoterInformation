@@ -37,18 +37,18 @@ if options.nodb == False:
     dbhost = ""
     dbpass = ""
     with open( "/home/ruddy/Projects/PAVoterInformation/etc/passwords.pw", "r") as pwfile:
-    	for line in pwfile:
-    		tup = line.split( " => " )
-    		if tup[0] == "dbuser":
-    			dbuser=tup[1].rstrip()
-    		elif tup[0] == "db":
-    			db=tup[1].rstrip()
-    		elif tup[0] == "dbhost":
-    			dbhost=tup[1].rstrip()
-    		elif tup[0] == "dbpass":
-    			dbpass=tup[1].rstrip()
-    		else:
-    			break
+        for line in pwfile:
+            tup = line.split( " => " )
+            if tup[0] == "dbuser":
+                dbuser=tup[1].rstrip()
+            elif tup[0] == "db":
+                db=tup[1].rstrip()
+            elif tup[0] == "dbhost":
+                dbhost=tup[1].rstrip()
+            elif tup[0] == "dbpass":
+                dbpass=tup[1].rstrip()
+            else:
+                break
         
         if options.debug == True:
             print "dbuser: ." + dbuser + "."
@@ -56,14 +56,14 @@ if options.nodb == False:
             print "dbpass: ." + dbpass + "."
             print "dbhost: ." + dbhost + "."
 
-	conn = mysql.connector.connect(
+    conn = mysql.connector.connect(
          	user=dbuser,
          	password=dbpass,
          	host=dbhost,
          	database=db)
-	cur = conn.cursor()
+    cur = conn.cursor()
 
-	# define insert query
+    # define insert query
 	add_user = ("INSERT INTO fb_list "
               	"(first_name, last_name, page) "
               	"VALUES (%(first_name)s, %(last_name)s, %(page)s)")
@@ -96,14 +96,20 @@ for line in infile:				# loop through the file
                 break
             elif ( pattern == name and newrecord == "yes" ):
                 newrecord = "no"
-                print "Name: " + match.group(1) + " " + match.group(2)
+                msg = "Name: "
 		if options.nodb == False:
 			data_user = {
 		  	  'first_name': match.group(1),
 		  	  'last_name': match.group(2),
 		  	  'page': options.source[0]
 			}
-			cur.execute(add_user, data_user)
+                        try:
+			    cur.execute(add_user, data_user)
+                        except mysql.connector.Error as err:
+                            msg = "Dup: "
+
+                print msg + match.group(1) + " " + match.group(2)
+
             #else:
                 #print pattern
                 #print " " + ": " + match.group(0)
