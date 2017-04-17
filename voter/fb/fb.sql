@@ -8,7 +8,11 @@ select
 	vl.Sex,
 	vl.Date_Of_Birth,
 	vl.Age,
-	vl.Polictical_Party,
+	CASE vl.Polictical_Party
+		WHEN "Democrat"	THEN 'Democrat'
+		WHEN "Republician"	THEN 'Republician'
+		ELSE 'Other'
+	END AS Polictical_Party,
 	vl.Full_Street_Address,
 	vl.PollingPlaceDescript,
 	vl.Region,
