@@ -18,9 +18,15 @@ select
 	vl.PhoneNumHome,
 	vl.General_Percent_Attended_Weighted,
 	vl.Primary_Percent_Attended_Weighted,
-
+	
 	CASE
-		WHEN concat(COALESCE(pri.page, ''), COALESCE(pub.page, ''), COALESCE(ple.page, ''), COALESCE(pat.page, ''), COALESCE(bri.page, ''), COALESCE(par.page, '')  ) <> '' THEN 'Yes'
+		WHEN (pri.page IS NOT NULL) OR
+			(pub.page IS NOT NULL) OR
+			(ple.page IS NOT NULL) OR
+			(pat.page IS NOT NULL) OR
+			(bri.page IS NOT NULL) OR
+			(par.page IS NOT NULL) OR
+			(aghs.page IS NOT NULL) THEN 'Yes'
 		ELSE 'No'
 	END AS Facebook,
 
@@ -33,7 +39,14 @@ select
 	END As ParentConfidence,
 
 	CASE
-		WHEN (concat(COALESCE(pri.page, ''), COALESCE(pub.page, ''), COALESCE(ple.page, ''), COALESCE(pl.confidence, ''), COALESCE(bri.page, ''), COALESCE(pat.page, ''), COALESCE(par.page, '') ) <> '' ) OR ((pih.Full_Street_Address IS NOT NULL) AND (vl.Age between 24 and 60))  THEN 'Yes' 
+		WHEN (pri.page IS NOT NULL) OR
+			(pub.page IS NOT NULL) OR
+			(ple.page IS NOT NULL) OR
+			(pat.page IS NOT NULL) OR
+			(bri.page IS NOT NULL) OR
+			(par.page IS NOT NULL) OR
+			(aghs.page IS NOT NULL) OR
+			((pih.Full_Street_Address IS NOT NULL) AND (vl.Age between 24 and 60))  THEN 'Yes' 
 		ELSE	'Unknown'
 	END AS PotentialFriendly
 from
@@ -49,6 +62,8 @@ from
 			pat.First_Name = vl.First_Name AND pat.Last_Name = vl.Last_Name AND pat.page = "patrick"
 		LEFT OUTER JOIN fb_list as bri ON 
 			bri.First_Name = vl.First_Name AND bri.Last_Name = vl.Last_Name AND bri.page = "brian"
+		LEFT OUTER JOIN fb_list as aghs ON 
+			aghs.First_Name = vl.First_Name AND aghs.Last_Name = vl.Last_Name AND bri.page = "aghsPAC"
 		LEFT OUTER JOIN parent_list as pl ON 
 			pl.First_Name = vl.First_Name AND pl.Last_Name = vl.Last_Name
 		#LEFT OUTER JOIN parent_in_house as pih ON 

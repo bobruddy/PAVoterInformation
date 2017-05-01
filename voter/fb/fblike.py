@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Grab options')
 
 parser.add_argument('-s', dest="source", action='store',
                     nargs=1, help="data source", required=True,
-                    choices=['agcPrivate', 'agcPublic', 'plePTA', 'brian', 'patrick', 'parents']
+                    choices=['aghsPAC', 'agcPrivate', 'agcPublic', 'plePTA', 'brian', 'patrick', 'parents']
                     )
 
 parser.add_argument('-i', dest="infile", action='store',
