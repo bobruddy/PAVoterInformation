@@ -19,17 +19,15 @@ select
 	vl.General_Percent_Attended_Weighted,
 	vl.Primary_Percent_Attended_Weighted,
 	
-	CASE
-		WHEN (pri.page IS NOT NULL) OR
-			(pub.page IS NOT NULL) OR
-			(ple.page IS NOT NULL) OR
-			(pat.page IS NOT NULL) OR
-			(bri.page IS NOT NULL) OR
-			(par.page IS NOT NULL) OR
-			(aghs.page IS NOT NULL) THEN 'Yes'
-		ELSE 'No'
-	END AS Facebook,
-
+	
+	IF( (pri.page IS NOT NULL) OR
+		(pub.page IS NOT NULL) OR
+		(ple.page IS NOT NULL) OR
+		(pat.page IS NOT NULL) OR
+		(bri.page IS NOT NULL) OR
+		(par.page IS NOT NULL) OR
+		(aghs.page IS NOT NULL), 'Yes', 'NO') AS Facebook,
+	
 	# We check to see if there is a parent in the house. If True and age is of school age
 	# baring years than we assume this person is also a parent
 	CASE
@@ -38,17 +36,27 @@ select
 		ELSE 'NA'
 	END As ParentConfidence,
 
-	CASE
-		WHEN (pri.page IS NOT NULL) OR
-			(pub.page IS NOT NULL) OR
-			(ple.page IS NOT NULL) OR
-			(pat.page IS NOT NULL) OR
-			(bri.page IS NOT NULL) OR
-			(par.page IS NOT NULL) OR
-			(aghs.page IS NOT NULL) OR
-			((pih.Full_Street_Address IS NOT NULL) AND (vl.Age between 24 and 60))  THEN 'Yes' 
-		ELSE	'Unknown'
-	END AS PotentialFriendly
+	IF( (pri.page IS NOT NULL) OR
+		(pub.page IS NOT NULL) OR
+		(ple.page IS NOT NULL) OR
+		(pat.page IS NOT NULL) OR
+		(bri.page IS NOT NULL) OR
+		(par.page IS NOT NULL) OR
+		(aghs.page IS NOT NULL) OR
+		((pih.Full_Street_Address IS NOT NULL) AND (vl.Age between 24 and 60)),  'Yes', 'Unknown') AS PotentialFriendly
+
+	#CASE
+	#	WHEN (pri.page IS NOT NULL) OR
+	#		(pub.page IS NOT NULL) OR
+	#		(ple.page IS NOT NULL) OR
+	#		(pat.page IS NOT NULL) OR
+	#		(bri.page IS NOT NULL) OR
+	#		(par.page IS NOT NULL) OR
+	#		(aghs.page IS NOT NULL) OR
+	#		((pih.Full_Street_Address IS NOT NULL) AND (vl.Age between 24 and 60))  THEN 'Yes' 
+	#	ELSE	'Unknown'
+	#END AS PotentialFriendly
+
 from
 	mv_voter_list as vl LEFT OUTER JOIN fb_list as pri ON 
 			pri.First_Name = vl.First_Name AND pri.Last_Name = vl.Last_Name AND pri.page = "agcPrivate"
