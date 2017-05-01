@@ -1,3 +1,18 @@
+<?php
+	// get config info
+	$pwFile = file_get_contents('../etc/passwords.pw');
+	$rows = explode ("\n", $pwFile);
+	
+	$pw;
+	
+	foreach($rows as $row => $data)
+	{
+	        $row_data = explode(' => ', $data);
+	        $pw[$row_data[0]] = $row_data[1];
+	
+	}
+
+?>
 <!DOCTYPE html >
   <head>
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
@@ -47,9 +62,9 @@
 
     <script>
       var customImage = {
-        R: 'http://unstable.vukuu.com:8080/voter/images/elephant-16.png',
-        D: 'http://unstable.vukuu.com:8080/voter/images/donkey-24.png',
-        mixed: 'http://unstable.vukuu.com:8080/voter/images/mixed.png'
+        R: 'images/elephant-16.png',
+        D: 'images/donkey-24.png',
+        mixed: 'images/mixed.png'
       };
 
         function initMap() {
@@ -62,7 +77,7 @@
 
           // Change this depending on the name of your PHP or XML file
           //downloadUrl('https://storage.googleapis.com/mapsdevsite/json/mapmarkers2.xml', function(data) {
-          downloadUrl("http://unstable.vukuu.com:8080/voter/addr.v3.php?<?php echo $_SERVER['QUERY_STRING']; ?>", function(data) {
+          downloadUrl("addr.v3.php?<?php echo $_SERVER['QUERY_STRING']; ?>", function(data) {
             var xml = data.responseXML;
             var markers = xml.documentElement.getElementsByTagName('marker');
             Array.prototype.forEach.call(markers, function(markerElem) {
@@ -119,7 +134,7 @@
       function doNothing() {}
     </script>
     <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=<?php print $mapsAPIweb; ?>&callback=initMap">
+    src="https://maps.googleapis.com/maps/api/js?key=<?php print $pw[mapsAPIweb]; ?>&callback=initMap">
     </script>
   </body>
 </html>
