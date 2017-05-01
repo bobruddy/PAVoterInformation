@@ -1,3 +1,4 @@
+drop table if exists fb_list;
 create table fb_list (
 	last_name	varchar(128),
 	first_name	varchar(128),
