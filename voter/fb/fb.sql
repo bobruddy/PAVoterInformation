@@ -4,6 +4,8 @@ create view simple_voter_list as
 
 select 
 	vl.Full_Name,
+	vl.First_Name,
+	vl.Last_Name,
 	vl.Sex,
 	vl.Date_Of_Birth,
 	vl.Age,
